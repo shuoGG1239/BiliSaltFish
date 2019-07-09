@@ -15,6 +15,7 @@
 <style lang="scss" scoped>
     .main {
         background-color: #25a4bb;
+        height: 5rem;
     }
 
 </style>
