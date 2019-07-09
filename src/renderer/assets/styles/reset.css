@@ -3,6 +3,7 @@ html {
   background-color: transparent;
   color: #000;
   font-size: 15px;
+  height: 100%;
 }
 body,
 ul,
@@ -172,6 +173,7 @@ sub {
 html {
   overflow-x: hidden;
   height: 100%;
+  margin: 0;
   font-size: 75px;
   -webkit-tap-highlight-color: transparent;
 }
@@ -181,6 +183,8 @@ body {
   font-size: 0.28rem;
   line-height: 1;
   -webkit-text-size-adjust: none;
+  height: 100%;
+  margin: 0;
 }
 hr {
   height: 0.02rem;

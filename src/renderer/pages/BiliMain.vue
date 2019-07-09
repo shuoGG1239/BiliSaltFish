@@ -1,8 +1,9 @@
 <template>
     <div>
-        <webview class="main" src="http://bilibili.com"
+        <!-- <webview class="main" src="http://bilibili.com"
                  useragent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
-                 disablewebsecurity autosize="on"></webview>
+                 disablewebsecurity autosize="on"></webview> -->
+                 <div class="main">shuoGG</div>
     </div>
 </template>
 
@@ -15,7 +16,7 @@
 <style lang="scss" scoped>
     .main {
         background-color: #25a4bb;
-        height: 5rem;
+        height: 100%;
     }
 
 </style>

@@ -5,12 +5,17 @@
 </template>
 
 <script>
-  export default {
-    name: 'bilisaltfish'
+import BiliMain from "@/pages/BiliMain";
+export default {
+  name: "bilisaltfish",
+  components: {
+    BiliMain
   }
+};
 </script>
 
 <style lang="scss">
-  .app {
-  }
+.app {
+  height: 100%;
+}
 </style>
