@@ -1,2 +1,2 @@
-# BiliSaltFish
-咸鱼专用客户端
+# bilisaltfish
+* 摸鱼专用~
