@@ -1,22 +1,23 @@
 <template>
-    <div id="app">
-        <router-view></router-view>
-    </div>
+  <div id="app">
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
-    import BiliMain from "@/pages/BiliMain";
+import BiliMain from "@/pages/BiliMain";
 
-    export default {
-        name: "bilisaltfish",
-        components: {
-            BiliMain
-        }
-    };
+export default {
+  name: "bilisaltfish",
+  components: {
+    BiliMain
+  }
+};
 </script>
 
 <style lang="scss">
-    #app {
-        height: 100%;
-    }
+#app {
+  height: 100%;
+  background-color: rgb(255, 118, 182);
+}
 </style>
