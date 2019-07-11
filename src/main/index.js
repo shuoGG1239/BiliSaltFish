@@ -14,9 +14,6 @@ const winURL = process.env.NODE_ENV === 'development'
     : `file://${__dirname}/index.html`;
 
 function createWindow() {
-    globalShortcut.register('CommandOrControl+Q', ()=> {
-        console.log(123)
-    });
     mainWindow = new BrowserWindow({
         height: 563,
         useContentSize: true,
@@ -24,12 +21,12 @@ function createWindow() {
         frame: true,
         webPreferences: {
             webSecurity: false,
-            nodeIntegration: false,
-            zoomFactor:1.0
+            nodeIntegration: true,
+            zoomFactor:1.0,
         }
     });
 
-    mainWindow.loadURL("http://bilibili.com");
+    mainWindow.loadURL(winURL);
     mainWindow.setAlwaysOnTop(false);
     mainWindow.webContents.on('new-window', function (e, url) {
         e.preventDefault();
