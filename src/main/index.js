@@ -1,4 +1,4 @@
-import {app, BrowserWindow} from 'electron'
+import {app, BrowserWindow, webFrame, globalShortcut } from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -14,24 +14,34 @@ const winURL = process.env.NODE_ENV === 'development'
     : `file://${__dirname}/index.html`;
 
 function createWindow() {
-    /**
-     * Initial window options
-     */
+    globalShortcut.register('CommandOrControl+Q', ()=> {
+        console.log(123)
+    });
     mainWindow = new BrowserWindow({
         height: 563,
         useContentSize: true,
         width: 1000,
         frame: true,
+        webPreferences: {
+            webSecurity: false,
+            nodeIntegration: false,
+            zoomFactor:1.0
+        }
     });
 
-    mainWindow.loadURL(winURL);
-    mainWindow.setAlwaysOnTop(true);
+    mainWindow.loadURL("http://bilibili.com");
+    mainWindow.setAlwaysOnTop(false);
+    mainWindow.webContents.on('new-window', function (e, url) {
+        e.preventDefault();
+        mainWindow.loadURL(url);
+    });
     mainWindow.on('closed', () => {
         mainWindow = null
-    })
+    });
 }
 
 app.on('ready', createWindow);
+
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
