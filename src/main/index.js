@@ -1,4 +1,4 @@
-import {app, BrowserWindow, webFrame, globalShortcut } from 'electron'
+import {app, BrowserWindow, ipcMain } from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -18,7 +18,7 @@ function createWindow() {
         height: 563,
         useContentSize: true,
         width: 1000,
-        frame: true,
+        frame: false,
         webPreferences: {
             webSecurity: false,
             nodeIntegration: true,
@@ -27,13 +27,19 @@ function createWindow() {
     });
 
     mainWindow.loadURL(winURL);
-    mainWindow.setAlwaysOnTop(false);
+    mainWindow.setAlwaysOnTop(true);
     mainWindow.webContents.on('new-window', function (e, url) {
         e.preventDefault();
         mainWindow.loadURL(url);
     });
     mainWindow.on('closed', () => {
         mainWindow = null
+    });
+    ipcMain.on('window-min', () => {
+        mainWindow.minimize();
+    });
+    ipcMain.on('window-close', () => {
+        mainWindow.close();
     });
 }
 
