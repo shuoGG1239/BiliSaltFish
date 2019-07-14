@@ -1,9 +1,15 @@
-const ipc = require('electron').ipcRenderer;
 
 window.addEventListener('DOMContentLoaded', function () {
-    // 初始化样式
-    let scrollbar = document.createElement('style');
-    scrollbar.type = 'text/css';
+    // mac默认的样式很漂亮了,不需要修正
+    if (process.platform !== 'darwin') initCss();
+    initVideoPages();
+    initLivePages();
+    initBlockAd();
+});
+
+function initCss() {
+    let webviewStyle = document.createElement('style');
+    webviewStyle.type = 'text/css';
     let css = `html{font-family:'Helvetica Neue', Helvetica, 'Hiragino Sans GB', 'Segoe UI', 'Microsoft Yahei', Tahoma, Arial, STHeiti, sans-serif} 
             ::-webkit-scrollbar {
                 width: 10px;
@@ -20,19 +26,22 @@ window.addEventListener('DOMContentLoaded', function () {
                 background-color: transparent;
             }
             `;
-    scrollbar.innerHTML = css;
-    document.head.appendChild(scrollbar);
+    webviewStyle.innerHTML = css;
+    document.head.appendChild(webviewStyle);
+}
 
+function initVideoPages() {
+    const ipc = require('electron').ipcRenderer;
     // 普通视频页：自动最大化播放器
-    if( window.location.href.indexOf('video/av') > -1 ||
+    if (window.location.href.indexOf('video/av') > -1 ||
         window.location.href.indexOf('html5player.html') > -1 ||
-        window.location.href.indexOf('bangumi/play/') > -1 ) {
+        window.location.href.indexOf('bangumi/play/') > -1) {
         let playerInitCheck = setInterval(() => {
             let wideScreenButton;
-            if( wideScreenButton = document.querySelector('[class*="bilibili-player-iconfont-web-fullscreen"]') ) {
+            if (wideScreenButton = document.querySelector('[class*="bilibili-player-iconfont-web-fullscreen"]')) {
                 wideScreenButton.click();
                 // 隐藏全屏播放器（在某些情况下会出现）的滚动条
-                document.body.style.overflow = 'hidden';
+                // document.body.style.overflow = 'hidden';
                 // 从app层面把 上、下 按键传进来，方便播放器控制音量
                 ipc.on('change-volume', (ev, arg) => {
                     let event = new KeyboardEvent('keydown', {
@@ -46,20 +55,22 @@ window.addEventListener('DOMContentLoaded', function () {
                     volume.dispatchEvent(event);
                 });
                 clearInterval(playerInitCheck);
-            } else if( ++checkCount > 100 ) {
+            } else if (++checkCount > 100) {
                 clearInterval(playerInitCheck);
             }
         }, 50), checkCount = 0;
     }
+}
 
+function initLivePages() {
     // 使用桌面版 HTML5 直播播放器
-    if ( /\/\/live\.bilibili\.com\/\d+/.test(window.location.href) ) {
+    if (/\/\/live\.bilibili\.com\/\d+/.test(window.location.href)) {
         let playerInitCheck = setInterval(() => {
             // 通过查询 HTML5 播放器 DIV 来判断页面加载
-            if ( document.querySelector('.bp-no-flash-tips') ) {
+            if (document.querySelector('.bp-no-flash-tips')) {
                 // 切换 HTML5 播放器
                 window.EmbedPlayer.loader();
-            } else if ( document.querySelector('.bilibili-live-player') ) {
+            } else if (document.querySelector('.bilibili-live-player')) {
                 // 全屏播放器并隐藏聊天栏
                 document.getElementsByTagName('body')[0].classList.add('player-full-win', 'hide-aside-area');
                 // 隐藏聊天栏显示按钮
@@ -71,13 +82,15 @@ window.addEventListener('DOMContentLoaded', function () {
                 // 隐藏全屏播放器（在某些情况下会出现）的滚动条
                 document.body.style.overflow = 'hidden';
                 clearInterval(playerInitCheck);
-            } else if ( ++checkCount > 1000 ) {
+            } else if (++checkCount > 1000) {
                 clearInterval(playerInitCheck);
             }
         }, 100), checkCount = 0;
     }
+}
 
 
+function initBlockAd() {
     // 移除app广告
     let appAdCheck, appAdNode;
     function removeAppAd() {
@@ -96,7 +109,6 @@ window.addEventListener('DOMContentLoaded', function () {
             appAdNode.style.left = '-999999px';
         }
     }
-
     appAdCheck = setInterval(removeAppAd, 500);
     removeAppAd();
-});
+}
