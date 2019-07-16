@@ -17,7 +17,7 @@
     "postinstall": ""
   },
   "build": {
-    "productName": "bilisaltfish",
+    "productName": "哔哩咸鱼",
     "appId": "bilisaltfish",
     "directories": {
       "output": "build"
