@@ -1,4 +1,3 @@
-
 window.addEventListener('DOMContentLoaded', function () {
     // mac默认的样式很漂亮了,不需要修正
     if (process.platform !== 'darwin') initCss();
@@ -13,7 +12,7 @@ function initCss() {
     let css = `html{font-family:'Helvetica Neue', Helvetica, 'Hiragino Sans GB', 'Segoe UI', 'Microsoft Yahei', Tahoma, Arial, STHeiti, sans-serif} 
             ::-webkit-scrollbar {
                 width: 10px;
-                height: 45px;
+                height: 15px;
             }
             ::-webkit-scrollbar-thumb {
                 background-color: rgb(255, 164, 187);
@@ -37,8 +36,8 @@ function initVideoPages() {
         window.location.href.indexOf('html5player.html') > -1 ||
         window.location.href.indexOf('bangumi/play/') > -1) {
         let playerInitCheck = setInterval(() => {
-            let wideScreenButton;
-            if (wideScreenButton = document.querySelector('[class*="bilibili-player-iconfont-web-fullscreen"]')) {
+            let wideScreenButton = document.querySelector('[class*="bilibili-player-iconfont-web-fullscreen"]');
+            if (wideScreenButton) {
                 wideScreenButton.click();
                 clearInterval(playerInitCheck);
             } else if (++checkCount > 100) {
@@ -79,6 +78,7 @@ function initLivePages() {
 function initBlockAd() {
     // 移除app广告
     let appAdCheck, appAdNode;
+
     function removeAppAd() {
         // 第一次check，如果上一次获取到的dom引用还在，我们就假设上一次设定的left: -99999px还有效，不做任何操作
         if (appAdNode) {
@@ -95,6 +95,7 @@ function initBlockAd() {
             appAdNode.style.left = '-999999px';
         }
     }
+
     appAdCheck = setInterval(removeAppAd, 500);
     removeAppAd();
 }

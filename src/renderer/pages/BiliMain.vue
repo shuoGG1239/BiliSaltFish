@@ -4,7 +4,7 @@
             <div class="btn-control-group">
                 <button :disabled="this.backStack.length === 0" class="btn-control" @click="handleBack"><</button>
                 <button :disabled="this.forwardStack.length === 0" class="btn-control" @click="handleForward">></button>
-                <button class="btn-control" @click="handleReload">◎</button>
+                <button class="btn-control" @click="handleReload">◯</button>
                 <button class="btn-control" @click="handleHome">△</button>
             </div>
             <div class="btn-window-group">
@@ -14,7 +14,6 @@
             </div>
         </div>
         <webview ref="wb" class="wb" src="http://bilibili.com" 
-        useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36"
         disablewebsecurity autosize allowpopups :preload="preload"></webview>
     </div>
 </template>
@@ -29,7 +28,7 @@
                 backStack: [],
                 forwardStack: [],
                 webview: null,
-                preload: `file:${require('path').resolve(__dirname, './preload.js')}`
+                preload: `file:${require('path').resolve(__static, './preload.js')}`
             };
         },
         methods: {
@@ -60,13 +59,13 @@
                 require('electron').ipcRenderer.send('window-min')
             },
             handleWindowConfig() {
-                console.log(this.preload)
+                alert(this.preload)
             },
         },
         mounted() {
             this.webview = this.$refs.wb;
             this.webview.addEventListener("new-window", e => {
-                var protocol = require("url").parse(e.url).protocol;
+                let protocol = require("url").parse(e.url).protocol;
                 if (protocol === "http:" || protocol === "https:") {
                     this.backStack.push(this.webview.src);
                     this.forwardStack = [];
@@ -152,34 +151,9 @@
         }
 
         .wb {
-            // height: 100%;
             flex: 1;
             border-radius: .1rem;
             margin-top: 0.08rem;
-            ::-webkit-scrollbar {
-                width: 0.15rem;
-                height: 0.15rem;
-            }
-
-            ::-webkit-scrollbar-thumb {
-                background-color: #3EB94E;
-                border-radius: 0.15rem;
-            }
-
-            ::-webkit-scrollbar-thumb:hover {
-                background-color: #8fb989;
-            }
-
-            ::-webkit-scrollbar-track {
-                background-color: transparent;
-                border-radius: 0.15rem;
-            }
-
-            ::-webkit-scrollbar-button {
-                height: 0.05rem;
-                width: 0.05rem;
-                border-radius: 0.07rem;
-            }
         }
     }
 </style>
