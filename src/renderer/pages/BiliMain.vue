@@ -59,7 +59,6 @@
                 require('electron').ipcRenderer.send('window-min')
             },
             handleWindowConfig() {
-                alert(this.preload)
             },
         },
         mounted() {
