@@ -21,7 +21,10 @@ function initCss() {
             ::-webkit-scrollbar-thumb:hover {
                 background-color: rgb(251, 114, 153);
             }
-            ::-webkit-scrollbar-track {
+            ::-webkit-scrollbar-button {
+                background-color: transparent;
+            }
+            ::-webkit-scrollbar-corner {
                 background-color: transparent;
             }
             `;
