@@ -2,15 +2,30 @@
     <div class="main">
         <div class="header">
             <div class="btn-control-group">
-                <button :disabled="this.backStack.length === 0" class="btn-control" @click="handleBack"><</button>
-                <button :disabled="this.forwardStack.length === 0" class="btn-control" @click="handleForward">></button>
-                <button class="btn-control" @click="handleReload">◯</button>
-                <button class="btn-control" @click="handleHome">△</button>
+                <button :disabled="this.backStack.length === 0" class="btn-control" @click="handleBack">
+                    <div class="iconfont">&#xe84f;</div>
+                </button>
+                <button :disabled="this.forwardStack.length === 0" class="btn-control" @click="handleForward">
+                    <div class="iconfont">&#xe84e;</div>
+                </button>
+                <button class="btn-control" @click="handleReload">
+                    <div class="iconfont">&#xe831;</div>
+                </button>
+                <button class="btn-control" @click="handleHome">
+                    <div class="iconfont">&#xe88b;</div>
+
+                </button>
             </div>
             <div class="btn-window-group">
-                <button class="btn-window" @click="handleWindowConfig">+</button>
-                <button class="btn-window" @click="handleWindowMinimize">-</button>
-                <button class="btn-window" @click="handleWindowClose">×</button>
+                <button class="btn-window" @click="handleWindowConfig">
+                    <div class="iconfont">&#xe818;</div>
+                </button>
+                <button class="btn-window" @click="handleWindowMinimize">
+                    <div class="iconfont">&#xe828;</div>
+                </button>
+                <button class="btn-window" @click="handleWindowClose">
+                    <div class="iconfont">&#xe82a;</div>
+                </button>
             </div>
         </div>
         <webview ref="wb" class="wb" src="http://bilibili.com" 
@@ -113,6 +128,9 @@
                     color: white;
                     background-color: rgb(244, 90, 141);
                     border-radius: 0.05rem;
+                    .iconfont {
+                        font-size: .12rem;
+                    }
                 }
 
                 .btn-control:hover {
@@ -137,6 +155,9 @@
                     color: white;
                     background-color: rgb(244, 90, 141);
                     border-radius: 0.05rem;
+                    .iconfont {
+                        font-size: .12rem;
+                    }
                 }
 
                 .btn-window:hover {
