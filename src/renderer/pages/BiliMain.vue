@@ -3,28 +3,28 @@
         <div class="header">
             <div class="btn-control-group">
                 <button :disabled="this.backStack.length === 0" class="btn-control" @click="handleBack">
-                    <div class="iconfont">&#xe84f;</div>
+                    <div class="iconfont">&#xe7ec;</div>
                 </button>
                 <button :disabled="this.forwardStack.length === 0" class="btn-control" @click="handleForward">
-                    <div class="iconfont">&#xe84e;</div>
+                    <div class="iconfont">&#xe7eb;</div>
                 </button>
                 <button class="btn-control" @click="handleReload">
-                    <div class="iconfont">&#xe831;</div>
+                    <div class="iconfont">&#xe788;</div>
                 </button>
                 <button class="btn-control" @click="handleHome">
-                    <div class="iconfont">&#xe88b;</div>
+                    <div class="iconfont">&#xe7c6;</div>
 
                 </button>
             </div>
             <div class="btn-window-group">
                 <button class="btn-window" @click="handleWindowConfig">
-                    <div class="iconfont">&#xe818;</div>
+                    <div class="iconfont">&#xe78e;</div>
                 </button>
                 <button class="btn-window" @click="handleWindowMinimize">
-                    <div class="iconfont">&#xe828;</div>
+                    <div class="iconfont">&#xe7fd;</div>
                 </button>
                 <button class="btn-window" @click="handleWindowClose">
-                    <div class="iconfont">&#xe82a;</div>
+                    <div class="iconfont">&#xe7fc;</div>
                 </button>
             </div>
         </div>
@@ -129,7 +129,7 @@
                     background-color: rgb(244, 90, 141);
                     border-radius: 0.05rem;
                     .iconfont {
-                        font-size: .12rem;
+                        font-size: .15rem;
                     }
                 }
 
@@ -156,7 +156,7 @@
                     background-color: rgb(244, 90, 141);
                     border-radius: 0.05rem;
                     .iconfont {
-                        font-size: .12rem;
+                        font-size: .15rem;
                     }
                 }
 
