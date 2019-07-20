@@ -38,8 +38,21 @@ function createWindow() {
     ipcMain.on('window-min', () => {
         mainWindow.minimize();
     });
+    ipcMain.on('window-max', () => {
+        if (mainWindow.isMaximized()) {
+            mainWindow.unmaximize();
+        } else {
+            mainWindow.maximize();
+        }
+    });
     ipcMain.on('window-close', () => {
         mainWindow.close();
+    });
+    ipcMain.on('window-lock', ()=> {
+        mainWindow.setAlwaysOnTop(true);
+    });
+    ipcMain.on('window-unlock', ()=> {
+        mainWindow.setAlwaysOnTop(false);
     });
 }
 

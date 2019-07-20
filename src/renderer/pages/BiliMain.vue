@@ -17,7 +17,11 @@
                 </button>
             </div>
             <div class="btn-window-group">
-                <button class="btn-window" @click="handleWindowConfig">
+                <button class="btn-window" @click="handleWindowLock" ref="btnLock" 
+                :class="this.locked? 'btn-window-locked': 'btn-window'">
+                    <div class="iconfont">&#xe7c9;</div>
+                </button>
+                <button class="btn-window" v-show="false" @click="handleWindowConfig">
                     <div class="iconfont">&#xe78e;</div>
                 </button>
                 <button class="btn-window" @click="handleWindowMinimize">
@@ -35,6 +39,7 @@
 
 <script>
     import Mousetrap from "mousetrap";
+import { watch } from 'fs';
 
     export default {
         name: "BiliMain",
@@ -43,6 +48,7 @@
                 backStack: [],
                 forwardStack: [],
                 webview: null,
+                locked: true,
                 preload: `file:${require('path').resolve(__static, './preload.js')}`
             };
         },
@@ -67,6 +73,9 @@
                 this.backStack = [];
                 this.forwardStack = [];
             },
+            handleWindowLock() {
+                this.locked = !this.locked;
+            },
             handleWindowClose() {
                 require('electron').ipcRenderer.send('window-close')
             },
@@ -86,19 +95,34 @@
                     this.webview.loadURL(e.url);
                 }
             });
-            Mousetrap.bind("ctrl+0", () => {
+            Mousetrap.bind(["ctrl+0", 'command+0'], () => {
                 this.webview.setZoomFactor(1.0);
             });
-            Mousetrap.bind("ctrl+-", () => {
+            Mousetrap.bind(["ctrl+-", 'command+-'], () => {
                 this.webview.getZoomLevel((level)=> {
                     this.webview.setZoomLevel(level-1);
                 })
             });
-            Mousetrap.bind("ctrl+=", () => {
+            Mousetrap.bind(["ctrl+=", "command+="], () => {
                 this.webview.getZoomLevel((level)=> {
                     this.webview.setZoomLevel(level+1);
                 })
             });
+            Mousetrap.bind(["ctrl+m", "command+m"], () => {
+                require('electron').ipcRenderer.send('window-min')
+            });
+            Mousetrap.bind(["ctrl+f", "command+f"], () => {
+                require('electron').ipcRenderer.send('window-max')
+            });
+            Mousetrap.bind(["ctrl+l", "command+l"], () => {
+                this.locked = !this.locked;
+            });
+        },
+        watch: {
+            locked(v) {
+                if (!v) require('electron').ipcRenderer.send('window-unlock');
+                else require('electron').ipcRenderer.send('window-lock');
+            }
         }
     };
 </script>
@@ -167,6 +191,24 @@
                 .btn-window:disabled {
                     background-color: rgb(244, 90, 141);
                 }
+
+                .btn-window-locked {
+                    font-size: 0.2rem;
+                    height: 0.3rem;
+                    line-height: 0.3rem;
+                    width: 0.3rem;
+                    color: white;
+                    background-color: rgb(251, 114, 153);
+                    border-radius: 0.05rem;
+                    .iconfont {
+                        font-size: .15rem;
+                    }
+                }
+
+                .btn-window-locked:hover {
+                    background-color: rgb(251, 114, 153);
+                }
+
             }
         }
 
