@@ -293,7 +293,6 @@ function breakAreaLimit() {
         window.XMLHttpRequest = new Proxy(
             XMLHttpRequest, new ClassHandler(XhrHandler)
         );
-
         window.addEventListener('load', () => {
             if (document.querySelector('div.error-body')) {
                 // try load via proxy

@@ -1,7 +1,7 @@
 <template>
     <div class="main">
         <div class="header">
-            <div class="btn-control-group">
+            <div class="btn-control-group no-select">
                 <button :disabled="this.backStack.length === 0" class="btn-control" @click="handleBack">
                     <div class="iconfont">&#xe7ec;</div>
                 </button>
@@ -16,7 +16,7 @@
 
                 </button>
             </div>
-            <div class="btn-window-group">
+            <div class="btn-window-group no-select">
                 <button class="btn-window" @click="handleWindowLock" ref="btnLock" 
                 :class="this.locked? 'btn-window-locked': 'btn-window'">
                     <div class="iconfont">&#xe7c9;</div>
@@ -128,6 +128,12 @@ import { watch } from 'fs';
 </script>
 
 <style lang="scss" scoped>
+    .no-select {
+        -webkit-user-select:none;
+        -moz-user-select:none;
+        -ms-user-select:none;
+        user-select:none;
+    }
     .main {
         height: 100%;
         padding: 0.05rem;
