@@ -4,7 +4,7 @@
 
 
 ### 界面
-* 默认置顶, 所以伸缩, 方便边撸代码, 边挂B站
+* 默认置顶, 随意伸缩, 方便边撸代码, 边挂B站
   ![example1.jpg](https://i.loli.net/2020/01/24/YwKoXvZBeWSqj2D.png)
 
   

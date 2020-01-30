@@ -104,27 +104,47 @@ function initBlockAd() {
     removeAppAd();
 }
 
-
+// todo 暂时无效
 function breakAreaLimit() {
-    const url_status = [
-        /^https:\/\/bangumi\.bilibili\.com\/view\/web_api\/season\/user\/status\?.*/,
-        /^https:\/\/api\.bilibili\.com\/pgc\/view\/web\/season\/user\/status\?.*/,
-    ];
-    const url_play = /^https:\/\/api\.bilibili\.com\/pgc\/player\/web\/playurl\?.*/;
+    (function(XMLHttpRequest) {
+        const url_status =  [
+            /^https:\/\/bangumi\.bilibili\.com\/view\/web_api\/season\/user\/status\?.*/,
+            /^https:\/\/api\.bilibili\.com\/pgc\/view\/web\/season\/user\/status\?.*/,
+        ];
+        const url_play = /^https:\/\/api\.bilibili\.com\/pgc\/player\/web\/playurl\?.*/;
+        const url_api_replace = /^https:\/\/api\.bilibili\.com\//;
+        const url_replace_to =  [
+            [
+                // HK
+                [/僅.*港/],
+                {
+                    api: 'https://bilibili-hk-api.kghost.info/',
+                },
+            ],
+            [
+                // TW
+                [/僅.*台/],
+                {
+                    api: 'https://bilibili-tw-api.kghost.info/',
+                },
+            ],
+            [
+                // SG
+                [/仅限东南亚/],
+                {
+                    api: 'https://bilibili-sg-api.kghost.info/',
+                },
+            ],
+            [
+                // CN
+                [/^((?!僅).)*$/],
+                {
+                    api: 'https://bilibili-cn-api.kghost.info/',
+                },
+            ],
+        ];
 
-    const url_replace_www = /^https:\/\/www\.bilibili\.com\//;
-    const url_replace_www_to = {
-        'hk': 'https://bilibili-hk-www.kghost.info/',
-        'tw': 'https://bilibili-tw-www.kghost.info/',
-    };
 
-    const url_replace = /^https:\/\/api\.bilibili\.com\//;
-    const url_replace_to = [
-        [/僅.*港.*地區/, 'https://bilibili-hk-api.kghost.info/'],
-        [/僅.*台.*地區/, 'https://bilibili-tw-api.kghost.info/'],
-    ];
-
-    (function (XMLHttpRequest) {
         class ClassHandler {
             constructor(proxy) {
                 this.proxy = proxy;
@@ -135,14 +155,11 @@ function breakAreaLimit() {
                 return new Proxy(obj, new this.proxy(obj));
             }
         }
-
         const ProxyGetTarget = Symbol('ProxyGetTarget');
         const ProxyGetHandler = Symbol('ProxyGetHandler');
-
         class ObjectHandler {
             constructor(target) {
                 this.target = target;
-                this.log = false;
             }
 
             get(target, prop, receiver) {
@@ -154,7 +171,8 @@ function breakAreaLimit() {
                     return this;
                 } else {
                     const value = target[prop];
-                    if (typeof value == 'function') return new Proxy(value, new FunctionHandler(value));
+                    if (typeof value == 'function')
+                        return new Proxy(value, new FunctionHandler(value));
                     return value;
                 }
             }
@@ -185,7 +203,8 @@ function breakAreaLimit() {
             }
 
             getListeners(event) {
-                if (!this.listeners.hasOwnProperty(event)) this.listeners[event] = new Map();
+                if (!this.listeners.hasOwnProperty(event))
+                    this.listeners[event] = new Map();
                 return this.listeners[event];
             }
 
@@ -238,17 +257,37 @@ function breakAreaLimit() {
             get(target, prop, receiver) {
                 if (prop === 'open') {
                     return new Proxy(target.open, new this.open(target.open));
+                } else if (prop === 'send') {
+                    return new Proxy(target.send, new this.send(target.send));
                 } else if (prop === 'response' && this.overrideResponse) {
-                    console.log("BAL: Return hooked area limit")
+                    console.log('BAL: Return hooked area limit');
                     return this.overrideResponseValue;
                 } else if (prop === 'responseText' && this.overrideResponse) {
-                    console.log("BAL: Return hooked area limit")
+                    console.log('BAL: Return hooked area limit');
                     return this.overrideResponseValue;
                 } else {
                     return super.get(target, prop, receiver);
                 }
             }
         }
+
+        const showTamperMonkeyUpdate = () => {
+            GM.getValue('__area__limit__', 0).then(last => {
+                if (last > new Date().getTime() - 86400000) return;
+                if (
+                    confirm(
+                        'Bilibili　港澳台: 无法获取播放文件信息，如果已开通大会员，请升级油猴到BETA版本'
+                    )
+                ) {
+                    window.open(
+                        'https://chrome.google.com/webstore/detail/tampermonkey-beta/gcalenpjmijncebpfijmoaglllgpjagf',
+                        '_blank'
+                    );
+                } else {
+                    GM.setValue('__area__limit__', new Date().getTime());
+                }
+            });
+        };
 
         let limited = false;
         XhrHandler.prototype.open = class extends FunctionHandlerBase {
@@ -258,25 +297,34 @@ function breakAreaLimit() {
 
                 if (method === 'GET') {
                     if (limited && url.match(url_play)) {
-                        for (const [match, to] of url_replace_to) {
-                            if (document.title.match(match)) {
-                                argumentsList[1] = url.replace(url_replace, to);
-                                console.log(`BAL: playurl via proxy ${to}.`)
+                        for (const [regs, to] of url_replace_to) {
+                            function any() {
+                                for (const reg of regs) {
+                                    if (document.title.match(reg)) return true;
+                                }
+                                return false;
+                            }
+                            if (any()) {
+                                argumentsList[1] = url.replace(url_api_replace, to.api);
+                                realTarget.hookCookie = true;
+                                console.log(`BAL: playurl via proxy ${to.api}.`);
                                 break;
                             }
                         }
-                    } else if ((function () {
-                        for (const status of url_status) {
-                            if (url.match(status)) return true;
-                        }
-                    })()) {
+                    } else if (
+                        (function() {
+                            for (const status of url_status) {
+                                if (url.match(status)) return true;
+                            }
+                        })()
+                    ) {
                         realTarget.addEventListener('readystatechange', () => {
                             if (realTarget.readyState === 4 && realTarget.status === 200) {
                                 const status = JSON.parse(realTarget.response);
                                 if (status && status.result && status.result.area_limit === 1) {
                                     status.result.area_limit = 0;
                                     limited = true;
-                                    console.log("BAL: Hook area limit")
+                                    console.log('BAL: Hook area limit');
                                     proxy[ProxyGetHandler].overrideResponse = true;
                                     proxy[ProxyGetHandler].overrideResponseValue = JSON.stringify(
                                         status
@@ -290,23 +338,70 @@ function breakAreaLimit() {
             }
         };
 
-        window.XMLHttpRequest = new Proxy(
-            XMLHttpRequest, new ClassHandler(XhrHandler)
+        XhrHandler.prototype.send = class extends FunctionHandlerBase {
+            call(fn, proxy, realTarget, argumentsList) {
+                if (realTarget.hookCookie) {
+                    GM_cookie.list(
+                        { domain: '.bilibili.com', name: 'SESSDATA' },
+                        (cookies, error) => {
+                            if (error) {
+                                console.log('BAL: Error fetch cookie, not login');
+                                realTarget.addEventListener('readystatechange', () => {
+                                    if (realTarget.readyState === 4 && realTarget.status === 200) {
+                                        const status = JSON.parse(realTarget.response);
+                                        if (status.code == -10403) showTamperMonkeyUpdate();
+                                    }
+                                });
+                                fn.apply(realTarget, argumentsList);
+                            } else {
+                                console.log(`BAL: Get Cookie ${cookies}`);
+                                realTarget.setRequestHeader('X-Cookie', cookies[0].value);
+                                fn.apply(realTarget, argumentsList);
+                            }
+                        }
+                    );
+                } else {
+                    fn.apply(realTarget, argumentsList);
+                }
+            }
+        };
+
+        unsafeWindow.XMLHttpRequest = new Proxy(
+            XMLHttpRequest,
+            new ClassHandler(XhrHandler)
         );
+
+        (() => {
+            var info = undefined;
+            Object.defineProperty(unsafeWindow, '__PGC_USERSTATE__', {
+                configurable: true,
+                get: () => info,
+                set: v => {
+                    if (v.area_limit == 1) {
+                        console.log('BAL: modify area_limit = 0');
+                        limited = true;
+                        v.area_limit = 0;
+                    }
+                    info = v;
+                },
+            });
+        })();
+
         window.addEventListener('load', () => {
             if (document.querySelector('div.error-body')) {
                 // try load via proxy
-                console.log("BAL: Load failed, try use proxy")
-                for (const loc in url_replace_www_to) {
-                    const xhr = new XMLHttpRequest();
-                    const url = window.location.href.replace(
-                        url_replace_www, url_replace_www_to[loc]
-                    );
-                    xhr.open('HEAD', url);
-                    xhr.onreadystatechange = function () {
-                        if (this.readyState === xhr.DONE && this.status === 204) {
-                            console.log(`BAL: Redirected to ${loc}.`)
-                            window.location = xhr.getResponseHeader('X-Location');
+                console.log('BAL: Load failed, try use proxy');
+                const avid = /\/av(\d*)/gm.exec(window.location.pathname)[1];
+                for (const [u, loc] of url_replace_to) {
+                    const detail = loc.api + 'x/web-interface/view/detail?aid=' + avid;
+                    const xhr = new unsafeWindow.XMLHttpRequest();
+                    xhr.open('GET', detail);
+                    xhr.hookCookie = true;
+                    xhr.onreadystatechange = function() {
+                        if (this.readyState === xhr.DONE && this.status === 200) {
+                            const r = JSON.parse(this.responseText).data.View.redirect_url;
+                            console.log(`BAL: Redirected to ${r}.`);
+                            window.location = r;
                         }
                     };
                     xhr.send();
