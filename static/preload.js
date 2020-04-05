@@ -36,7 +36,7 @@ function initCss() {
 function initVideoPages() {
     const ipc = require('electron').ipcRenderer;
     // 普通视频页：自动最大化播放器
-    if (window.location.href.indexOf('video/av') > -1 ||
+    if (window.location.href.indexOf('video/BV') > -1 ||
         window.location.href.indexOf('html5player.html') > -1 ||
         window.location.href.indexOf('bangumi/play/') > -1) {
         let playerInitCheck = setInterval(() => {
